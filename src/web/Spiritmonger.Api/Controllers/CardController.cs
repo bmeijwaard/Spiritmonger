@@ -1,4 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using Spiritmonger.Api.Models.Requests;
+using Spiritmonger.Api.Models.Responses;
+using Spiritmonger.Cmon.Constants;
+using Spiritmonger.Core.Contracts.DTO;
 using Spiritmonger.Core.Contracts.Services;
 using System;
 using System.Collections.Generic;
@@ -12,12 +17,12 @@ namespace Spiritmonger.Api.Controllers
     public class CardController : Controller
     {
         private readonly ICardService _cardService;
-        private readonly ICardNameService _cardNameService;
+        private readonly IMemoryCache _memoryCache;
 
-        public CardController(ICardService cardService, ICardNameService cardNameService)
+        public CardController(ICardService cardService, IMemoryCache memoryCache)
         {
             _cardService = cardService;
-            _cardNameService = cardNameService;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet("")]
@@ -28,18 +33,40 @@ namespace Spiritmonger.Api.Controllers
 
             var (response, totalCount) = await _cardService.SearchAsync(namepart, 0, -1, true);
             return Ok(new { Success = true, Error = string.Empty, Data = response, TotalCount = totalCount });
+        }
 
-            //var result = await _cardService
-            //    .ReadAsync(card => card.Name == namepart)
-            //    .ConfigureAwait(false);
+        [HttpPost("")]
+        [Produces(typeof(PagedResponse<CardDTO>))]
+        public async Task<IActionResult> Search([FromBody] CardSearchRequest request)
+        {
+            if (request.NamePart.Length <= 3)
+                return StatusCode(400, new { Success = false, Error = "The search requires at least 4 characters." });
 
 
+            var cacheKey = CacheKeys.GetCardSearchCacheKey(request);
+            if (!_memoryCache.TryGetValue(cacheKey, out PagedResponse<CardDTO> result))
+            {
+                var (response, totalCount) = await _cardService.SearchAsync(request.NamePart, request.Skip(), request.Take(), true);
 
-            //TODO: create generic response object.
-            //if (!result.Succeeded)
-            //    return StatusCode(500, new { Success = false, result.Error });
+                result = new PagedResponse<CardDTO>(request, totalCount, response);
 
-            // return Ok(new { Success = true, Error = string.Empty, result.Data });
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromDays(7));
+
+                _memoryCache.Set(cacheKey, result, cacheEntryOptions);
+
+                if (!_memoryCache.TryGetValue(CacheKeys.CARDS, out List<string> cached))
+                {
+                    cached = new List<string>
+                    {
+                        cacheKey
+                    };
+                }
+                cached.Add(cacheKey);
+                _memoryCache.Set(CacheKeys.CARDS, cached, cacheEntryOptions);
+            }
+
+            return Ok(new { Success = true, Error = string.Empty, Data = result });
         }
     }
 }
