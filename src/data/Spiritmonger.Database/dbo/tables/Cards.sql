@@ -10,3 +10,6 @@
 	CONSTRAINT [FK_CardNames_Cards_CardNameId] FOREIGN KEY ([CardNameId]) REFERENCES [dbo].[CardNames] ([Id])
 )
 GO
+
+CREATE INDEX [IX_Cards_Name] ON [dbo].[Cards] ([Name])
+GO
