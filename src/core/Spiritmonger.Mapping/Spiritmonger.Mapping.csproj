@@ -8,10 +8,20 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\cmon\Spiritmonger.Cmon\Spiritmonger.Cmon.csproj" />
     <ProjectReference Include="..\..\data\Spiritmonger.Domain\Spiritmonger.Domain.csproj" />
+    <ProjectReference Include="..\..\data\Spiritmonger.Persistence\Spiritmonger.Persistence.csproj" />
     <ProjectReference Include="..\Spiritmonger.Core.Contracts\Spiritmonger.Core.Contracts.csproj" />
+    <ProjectReference Include="..\Spiritmonger.Core\Spiritmonger.Core.csproj" />
   </ItemGroup>
 </Project>

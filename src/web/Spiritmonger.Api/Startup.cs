@@ -4,28 +4,73 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Spiritmonger.Api.Config;
+using Spiritmonger.Mapping.Modules;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
 
 namespace Spiritmonger.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
+        public IHostingEnvironment Env { get; }
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services = CoreConfiguration.Load(services, Configuration); 
+            services = CoreModule.Load(services, Configuration);
+            services.AddTransient<ControllerContext>();
+
             AutoMapperConfig.Register();
 
+            services.AddMemoryCache();
+
+            //Https redirect only when SSL is attached
+            if (!Env.IsDevelopment())
+            {
+                services.Configure<MvcOptions>(options =>
+                {
+                    options.Filters.Add(new RequireHttpsAttribute());
+                });
+            }
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddSwaggerGen(swagger =>
+            {     
+                swagger.DescribeAllEnumsAsStrings();
+                swagger.DescribeAllParametersInCamelCase();
+                swagger.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Spiritmonger.Api.xml"));
+                swagger.SwaggerDoc("v1", new Info
+                {
+                    Title = "Spiritmonger",
+                    Description = "The NicFit library",
+                    Version = "V1",
+                    Contact = new Contact() { Email = "bmeijwaard@gmail.com", Name = "Spiritmonger", Url = "" },
+                    TermsOfService = $"Terms of Service - {Guid.NewGuid()}",
+                    License = new License() { Name = "License", Url = "" }
+                });
+                // swagger.AddSecurityDefinition("JWT", new ApiKeyScheme() { In = "header", Description = "Spiritmonger", Name = "Authorization", Type = "apiKey" });
+            });
+
+            
+            //services.ConfigureSwaggerGen(swagger =>
+            //{
+            //    swagger.OperationFilter<FormFileOperationFilter>(); //Register File Upload Operation Filter
+            //});
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -34,8 +79,22 @@ namespace Spiritmonger.Api
                 app.UseHsts();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Spiritmonger");
+            });
+
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller}/{action=Index}/{id?}");
+            });
         }
     }
 }

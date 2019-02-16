@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Spiritmonger.Core.Contracts.DTO;
 using Spiritmonger.Core.Contracts.Messages;
+using Spiritmonger.Core.Contracts.Services;
 using Spiritmonger.Domain.Entities;
 using Spiritmonger.Persistence.Contracts;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Spiritmonger.Core.Services
 {
-    public abstract class BaseService<TEntity, TDto>
+    public abstract class BaseService<TEntity, TDto> : IBaseService<TEntity, TDto>
         where TEntity : BaseEntity
         where TDto : IBaseDto
     {
