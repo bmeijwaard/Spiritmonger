@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Spiritmonger.Core.Contracts.DTO;
 using Spiritmonger.Core.Contracts.Messages;
@@ -13,8 +14,9 @@ namespace Spiritmonger.Core.Contracts.Services
     {
         Task<ServiceResponse> CreateAsync(TDto dto);
         Task<ServiceResponse> DeleteAsync(TDto dto);
-        Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Func<TEntity, bool> expression = null);
+        Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Expression<Func<TEntity, bool>> expression = null);
         Task<ServiceResponse<TDto>> ReadAsync(Guid id);
         Task<ServiceResponse> UpdateAsync(TDto dto);
+        Task<ServiceResponse> BulkUpdateOrInsertAsync(IEnumerable<TDto> dtos);
     }
 }

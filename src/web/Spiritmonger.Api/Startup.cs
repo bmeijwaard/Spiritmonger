@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using Spiritmonger.Api.Config;
 using Spiritmonger.Mapping.Modules;
 using Swashbuckle.AspNetCore.Swagger;
@@ -42,7 +45,20 @@ namespace Spiritmonger.Api
             }
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'";
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
 
             services.AddSwaggerGen(swagger =>
             {     

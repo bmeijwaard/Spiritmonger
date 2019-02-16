@@ -8,6 +8,7 @@ using Spiritmonger.Persistence.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Spiritmonger.Core.Services
@@ -23,13 +24,13 @@ namespace Spiritmonger.Core.Services
             _contextProvider = contextProvider;
         }
 
-        public async Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Func<TEntity, bool> expression = null)
+        public async Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Expression<Func<TEntity, bool>> expression = null)
         {
-            var query = _contextProvider.Context.Set<TEntity>().AsQueryable();
+            IQueryable<TEntity> query = _contextProvider.Context.Set<TEntity>();
 
             if (expression != null)
             {
-                query = query.Where(expression).AsQueryable();
+                query = query.Where(expression);
             }
 
             var entities = await query.ToListAsync().ConfigureAwait(false);
@@ -93,6 +94,15 @@ namespace Spiritmonger.Core.Services
 
                 return new ServiceResponse();
             }).ConfigureAwait(false);
+        }
+
+        public async Task<ServiceResponse> BulkUpdateOrInsertAsync(IEnumerable<TDto> dtos)
+        {
+            return (ServiceResponse) await _contextProvider.ExecuteTransactionAsync(async context =>
+            {
+                await context.BulkInsertOrUpdateAsync(dtos.Select(dto => Mapper.Map<TEntity>(dto)).ToList()).ConfigureAwait(false);
+                return new ServiceResponse();
+            });
         }
     }
 }
