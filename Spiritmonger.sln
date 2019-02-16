@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spiritmonger.Persistence", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spiritmonger.Api", "src\web\Spiritmonger.Api\Spiritmonger.Api.csproj", "{AE6BDDE9-02B3-48FA-B77F-650436D50C07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spiritmonger.Persistence.Contracts", "src\data\Spiritmonger.Persistence.Contracts\Spiritmonger.Persistence.Contracts.csproj", "{B308118B-7B85-48FE-B503-E0CC00DE7C26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spiritmonger.Persistence.Contracts", "src\data\Spiritmonger.Persistence.Contracts\Spiritmonger.Persistence.Contracts.csproj", "{B308118B-7B85-48FE-B503-E0CC00DE7C26}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Spiritmonger.Database", "src\data\Spiritmonger.Database\Spiritmonger.Database.sqlproj", "{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,12 @@ Global
 		{B308118B-7B85-48FE-B503-E0CC00DE7C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B308118B-7B85-48FE-B503-E0CC00DE7C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B308118B-7B85-48FE-B503-E0CC00DE7C26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +108,7 @@ Global
 		{7784B9D5-C04F-4832-B498-BCBD8C3ACF17} = {3851C07D-ABB8-4B29-BFC4-D08CBF003687}
 		{AE6BDDE9-02B3-48FA-B77F-650436D50C07} = {81F724BE-66C2-49F2-961B-AE32D8A18A41}
 		{B308118B-7B85-48FE-B503-E0CC00DE7C26} = {3851C07D-ABB8-4B29-BFC4-D08CBF003687}
+		{6ADF0A7E-E9A6-472D-96E3-271C278A2B2E} = {3851C07D-ABB8-4B29-BFC4-D08CBF003687}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5AD757D-9A20-42C9-B187-8E31920E9B11}
