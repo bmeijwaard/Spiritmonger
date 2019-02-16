@@ -27,12 +27,10 @@ namespace Spiritmonger.Core.Services
         public async Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Expression<Func<TEntity, bool>> expression = null)
         {
             IQueryable<TEntity> query = _contextProvider.Context.Set<TEntity>();
-
             if (expression != null)
             {
                 query = query.Where(expression);
             }
-
             var entities = await query.ToListAsync().ConfigureAwait(false);
             return new ServiceResponse<IEnumerable<TDto>>(entities.Select(e => Mapper.Map<TDto>(e)));
         }

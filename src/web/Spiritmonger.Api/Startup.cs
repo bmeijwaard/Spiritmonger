@@ -35,7 +35,6 @@ namespace Spiritmonger.Api
 
             services.AddMemoryCache();
 
-            //Https redirect only when SSL is attached
             if (!Env.IsDevelopment())
             {
                 services.Configure<MvcOptions>(options =>
@@ -43,7 +42,6 @@ namespace Spiritmonger.Api
                     options.Filters.Add(new RequireHttpsAttribute());
                 });
             }
-
 
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 

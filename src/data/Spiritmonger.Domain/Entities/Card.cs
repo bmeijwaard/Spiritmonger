@@ -14,5 +14,10 @@ namespace Spiritmonger.Domain.Entities
         // TODO: this field is currently nullable for import purposes
         public Guid? CardNameId { get; set; }
         public CardName CardName { get; set; }
+
+
+        [NotMapped]
+        public int Relevance { get; set; }
+
     }
 }

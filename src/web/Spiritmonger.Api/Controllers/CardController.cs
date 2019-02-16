@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Spiritmonger.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]   
+    [ApiController]
     public class CardController : Controller
     {
         private readonly ICardService _cardService;
@@ -20,19 +20,26 @@ namespace Spiritmonger.Api.Controllers
             _cardNameService = cardNameService;
         }
 
-
-        [HttpGet("")] 
+        [HttpGet("")]
         public async Task<IActionResult> Get(string namepart)
         {
-            var result = await _cardNameService
-                .ReadAsync(card => card.Name.Contains(namepart))
-                .ConfigureAwait(false);
+            if (namepart.Length <= 3)
+                return StatusCode(400, new { Success = false, Error = "The search requires at least 4 characters." });
+
+            var (response, totalCount) = await _cardService.SearchAsync(namepart, 0, -1, true);
+            return Ok(new { Success = true, Error = string.Empty, Data = response, TotalCount = totalCount });
+
+            //var result = await _cardService
+            //    .ReadAsync(card => card.Name == namepart)
+            //    .ConfigureAwait(false);
+
+
 
             //TODO: create generic response object.
-            if (!result.Succeeded)
-                return StatusCode(500, new { Success = false, result.Error });
+            //if (!result.Succeeded)
+            //    return StatusCode(500, new { Success = false, result.Error });
 
-            return Ok(new { Success = true, Error = string.Empty, result.Data });
+            // return Ok(new { Success = true, Error = string.Empty, result.Data });
         }
     }
 }

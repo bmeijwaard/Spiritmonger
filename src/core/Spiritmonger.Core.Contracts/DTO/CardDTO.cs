@@ -14,6 +14,7 @@ namespace Spiritmonger.Core.Contracts.DTO
 
     public class CardDTO : CardBaseDTO
     {
+        public int Relevance { get; set; }
         public CardNameBaseDTO CardName { get; set; }
     }
 }
