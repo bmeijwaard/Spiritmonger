@@ -2,7 +2,7 @@
 
 namespace Spiritmonger.Core.Contracts.DTO
 {
-    public class CardBaseDTO
+    public class CardBaseDTO : IBaseDto
     {
         public Guid Id { get; set; }
         public int MultiverseId { get; set; }
