@@ -5,6 +5,7 @@ import { CardSearchRequest } from './_core/requests/cardSearch.request';
 import { ICard } from './_core/interfaces/card.interface';
 import { HttpClient } from '@angular/common/http';
 import { PagedResponse } from './_core/responses/paged.response';
+import * as _ from 'lodash';
 
 @Injectable()
 export class AppService {
@@ -68,6 +69,7 @@ export class AppService {
         if ((<any>data).success) {
           const response = (<any>data).data as PagedResponse<ICard>;
           this._dataStore.cards = this._dataStore.cards.concat(response.data);
+          this._dataStore.cards = _.sortBy(this._dataStore.cards, card => (<ICard>card).relevance);
           this._dataStore.pagination = new CardSearchRequest(response.namePart, response.page, response.pageLength);
 
           this._cards.next(Object.assign({}, this._dataStore).cards);

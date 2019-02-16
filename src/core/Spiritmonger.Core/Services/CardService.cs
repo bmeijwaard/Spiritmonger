@@ -115,8 +115,8 @@ namespace Spiritmonger.Core.Services
                     foreach (var par in searchParams)
                     {
                         var innerPredicate = PredicateBuilder.New<Card>()
-                            .Or(p => p.Name.Contains(par))
-                            .Or(p => p.Expansion.Contains(par));
+                            .Or(p => p.Name.Contains(par));
+                            //.Or(p => p.Expansion.Contains(par));
 
                         predicate.And(innerPredicate);
                     }
@@ -124,8 +124,8 @@ namespace Spiritmonger.Core.Services
                 else
                 {
                     predicate = PredicateBuilder.New<Card>()
-                        .Or(p => p.Name.Contains(searchParam))
-                        .Or(p => p.Expansion.Contains(searchParam));
+                        .Or(p => p.Name.Contains(searchParam));
+                        //.Or(p => p.Expansion.Contains(searchParam));
                 }
 
                 return _contextProvider
