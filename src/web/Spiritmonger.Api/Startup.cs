@@ -100,6 +100,8 @@ namespace Spiritmonger.Api
                 app.UseHsts();
             }
 
+            app.UseCors("AllowLocalhost4200");
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
 

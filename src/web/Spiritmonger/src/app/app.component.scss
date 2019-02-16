@@ -1,0 +1,27 @@
+.jumbo-background {
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  background-image: url(https://magic.wizards.com/sites/mtg/files/image_legacy_migration/mtg/images/daily/mm/mm39_spiritmongerSplash.jpg);
+}
+
+ngx-masonry {
+  margin: 0 auto;
+}
+
+.masonry-item {
+  width: 50vw;
+  @media screen and (min-width: 768px) {
+    width: 25vw;
+  }
+  @media screen and (min-width: 992px) {
+    width: 12.5vw;
+  }
+}
+
+.masonry-item img {
+  margin-bottom: 0px;
+  width: 100%;
+  height: 100%;
+}
+

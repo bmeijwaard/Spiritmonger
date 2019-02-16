@@ -42,13 +42,12 @@ namespace Spiritmonger.Api.Controllers
             if (request.NamePart.Length <= 3)
                 return StatusCode(400, new { Success = false, Error = "The search requires at least 4 characters." });
 
-
             var cacheKey = CacheKeys.GetCardSearchCacheKey(request);
-            if (!_memoryCache.TryGetValue(cacheKey, out PagedResponse<CardDTO> result))
+            if (!_memoryCache.TryGetValue(cacheKey, out CardSearchResponse result))
             {
                 var (response, totalCount) = await _cardService.SearchAsync(request.NamePart, request.Skip(), request.Take(), true);
 
-                result = new PagedResponse<CardDTO>(request, totalCount, response);
+                result = new CardSearchResponse(request, totalCount, response);
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromDays(7));
