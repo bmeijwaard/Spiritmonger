@@ -42,13 +42,21 @@ namespace Spiritmonger.Api
                     options.Filters.Add(new RequireHttpsAttribute());
                 });
             }
-            services.AddCors(options =>
+
+            services.AddCors(o => o.AddPolicy("All", builder =>
             {
-                options.AddPolicy("AllowLocalhost4200",
-                builder => builder.WithOrigins("http://localhost:4200", "https://spiritmonger.azurewebsites.net")
-                .AllowAnyHeader()
-                .AllowAnyMethod());
-            });
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowLocalhost4200",
+            //    builder => builder.WithOrigins("http://localhost:4200", "https://spiritmonger.azurewebsites.net")
+            //    .AllowAnyHeader()
+            //    .AllowAnyMethod());
+            //});
 
             services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
@@ -100,7 +108,7 @@ namespace Spiritmonger.Api
                 app.UseHsts();
             }
 
-            app.UseCors("AllowLocalhost4200");
+            app.UseCors("All");
 
             app.UseDefaultFiles();
             app.UseStaticFiles();

@@ -1,26 +1,34 @@
 <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <a class="navbar-brand">{{ title }}</a>
 </nav> -->
-<div class="container mt-4">
-  <div class="jumbo-background">
-    <div class="jumbotron" style="opacity: 0.9;">
-      <h1 class="display-3">Search</h1>
-      <p class="lead">And find out if you should or should not play this card.</p>
-      <form [formGroup]="searchForm" (submit)="updateName()" (keyup.enter)="updateName()">
-        <div class="input-group mb-3">
-          <input autofocus type="text" class="form-control" placeholder="Search for a card..." formControlName="namePart" />
-          <div class="input-group-append">
-            <button id="searchBtn" class="btn btn-primary" type="submit" [disabled]="isLoading || namePart.hasError('required') || namePart.hasError('minlength')">Button</button>
-          </div>
-        </div>
-        <p class="text-warning" *ngIf="namePart.hasError('required')">Start typing.</p>
-        <p class="text-danger" *ngIf="namePart.hasError('minlength')">Enter at least 4 characters.</p>
-        <p class="text-success" *ngIf="!namePart.hasError('minlength') && !namePart.hasError('required')">Good to go, press enter to search.</p>
-      </form>
-    </div>
-  </div>
 
-  <div class="row mb-5">
+<div id="searchBar" *ngIf="!hideSearchbar">
+  <div class="container mt-4">
+    <div class="jumbo-background">
+      <div class="jumbotron" style="opacity: 0.9;">
+        <h1 class="display-3">Search</h1>
+        <p class="lead">And find out if you should or should not play this card.</p>
+        <form [formGroup]="searchForm" (submit)="updateName()" (keyup.enter)="updateName()">
+          <div class="input-group mb-3">
+            <input autofocus type="text" class="form-control" placeholder="Search for a card..." formControlName="namePart" />
+            <div class="input-group-append">
+              <button id="searchBtn" class="btn btn-primary" type="submit" [disabled]="isLoading || namePart.hasError('required') || namePart.hasError('minlength')">Button</button>
+            </div>
+          </div>
+          <p class="text-warning" *ngIf="namePart.hasError('required')">Start typing.</p>
+          <p class="text-danger" *ngIf="namePart.hasError('minlength')">Enter at least 4 characters.</p>
+          <p class="text-success" *ngIf="!namePart.hasError('minlength') && !namePart.hasError('required')">Good to go, press enter to search.</p>
+        </form>
+      </div>
+    </div>
+    <!-- <div class="row mb-5">
+    <div class="col-12 text-center">
+
+        <div id="canvas"></div>
+
+    </div>
+  </div> -->
+    <!-- <div >
     <ngx-masonry [options]="masonryOptions" [updateLayout]="isLoading" [useImagesLoaded]="true">
       <div ngxMasonryItem *ngFor="let card of (card$ | async)" class="masonry-item">
         <img src="{{ card.imageUrl }}" alt="{{ card.name }}" title="{{ card.name }}" />
@@ -31,6 +39,7 @@
     <div class="col-12 text-center">
       <button id="moreBtn" type="button" class="btn btn-primary btn-lg" (click)="showMore()" [disabled]="isLoading || (card$ | async).length == 0">More</button>
     </div>
+  </div> -->
   </div>
 </div>
 
@@ -53,3 +62,5 @@
     </div>
   </div>
 </div>
+
+<div id="closeBtn" *ngIf="hideSearchbar" (click)="closeImages()"></div>

@@ -66,6 +66,7 @@ export class AppService {
     this._isLoading.next(true);
     this.http.post(this.baseUrl + 'card', this._dataStore.pagination).subscribe(
       data => {
+        console.log('show me the money', data);
         if ((<any>data).success) {
           const response = (<any>data).data as PagedResponse<ICard>;
           this._dataStore.cards = this._dataStore.cards.concat(response.data);
