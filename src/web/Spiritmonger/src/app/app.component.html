@@ -7,7 +7,7 @@
     <div class="jumbo-background">
       <div class="jumbotron" style="opacity: 0.9;">
         <h1 class="display-3">Search</h1>
-        <p class="lead">And find out if you should or should not play this card.</p>
+        <p class="lead">Wait for it, then scroll down and up.</p>
         <form [formGroup]="searchForm" (submit)="updateName()" (keyup.enter)="updateName()">
           <div class="input-group mb-3">
             <input autofocus type="text" class="form-control" placeholder="Search for a card..." formControlName="namePart" />
@@ -63,4 +63,8 @@
   </div>
 </div>
 
-<div id="closeBtn" *ngIf="hideSearchbar" (click)="closeImages()"></div>
+<div id="closeBtn" *ngIf="hideSearchbar" (click)="closeImages()">
+  <div class='close-button-container'>
+    <div class='close-button'></div>
+  </div>
+</div>

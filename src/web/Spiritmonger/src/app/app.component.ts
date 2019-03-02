@@ -7,13 +7,21 @@ import { NgxMasonryOptions } from 'ngx-masonry';
 import { ButtonHelper } from './_core/helpers/button.helper';
 import * as THREE from 'three';
 
+/**
+ * Helper function to determine if the current device is touch or a 'regular' screen using a mouse.
+ */
+function isTouchDevice() {
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase());
+}
+
 const MOUSE_WHEEL_EVENT = 'wheel';
 const TOUCH_MOVE = 'touchmove';
 const TOUCH_END = 'touchend';
 const MOUSE_DOWN = 'mousedown';
 const MOUSE_UP = 'mouseup';
 const MOUSE_MOVE = 'mousemove';
-const IMAGE_SIZE = 512;
+const IMAGE_SIZE_WIDTH = 512; //745 x 1040
+const IMAGE_SIZE_HEIGHT = 512; //745 x 1040
 const SCROLL_PER_IMAGE = 500;
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 const VERTEX_SHADER = `
@@ -103,7 +111,7 @@ export class AppComponent implements OnInit {
 
   // animation
   canvas: HTMLCanvasElement = null;
-  ctx: CanvasRenderingContext2D;
+  ctx: CanvasRenderingContext2D = null;
   mouseWheel = new ScrollPos();
 
   constructor(private builder: FormBuilder, private cardService: AppService) {}
@@ -130,19 +138,21 @@ export class AppComponent implements OnInit {
       } else {
         this.canvas.remove();
         this.ctx.canvas.remove();
+        this.canvas = null;
+        this.ctx = null;
+        this.mouseWheel = new ScrollPos();
         this.canvas = document.createElement('canvas');
       }
       this.hideSearchbar = true;
-      this.canvas.width = IMAGE_SIZE;
-      this.canvas.height = IMAGE_SIZE;
+      this.canvas.width = IMAGE_SIZE_WIDTH;
+      this.canvas.height = IMAGE_SIZE_HEIGHT;
       this.canvas.style.marginTop = '-32px';
-      this.canvas.style.display = 'block';
       this.ctx = this.canvas.getContext('2d');
 
       this.loadImages(cards).then(images => {
         this.init(images);
+        document.getElementsByTagName('canvas')[0].style.display = 'block';
       });
-
       document.body.appendChild(renderer.domElement);
     });
   }
@@ -177,7 +187,7 @@ export class AppComponent implements OnInit {
   };
 
   // three animation
-  resizeImage = (image, size = IMAGE_SIZE) => {
+  resizeImage = (image, size = IMAGE_SIZE_WIDTH) => {
     let newImage = image;
     let { width, height } = image;
     let newWidth = size / width;
@@ -198,9 +208,9 @@ export class AppComponent implements OnInit {
     let promises = [];
     for (var i = 0; i < cards.length; i++) {
       //for (var i = 0; i < this.files.length; i++) {
-      promises.push(
-        new Promise((resolve, reject) => {
-          if (cards[i].imageUrl.indexOf('gatherer.wizards.com') == -1) {
+      if (cards[i].imageUrl.indexOf('gatherer.wizards.com') == -1) {
+        promises.push(
+          new Promise((resolve, reject) => {
             let img = document.createElement('img');
             img.crossOrigin = 'anonymous';
             img.src = `${cards[i].imageUrl}`;
@@ -209,11 +219,11 @@ export class AppComponent implements OnInit {
             img.onload = image => {
               return resolve(image.target);
             };
-          }
-        })
-          .then(this.resizeImage)
-          .then(this.makeThreeTexture)
-      );
+          })
+            .then(this.resizeImage)
+            .then(this.makeThreeTexture)
+        );
+      }
     }
     return Promise.all(promises);
   };
@@ -287,8 +297,13 @@ export class AppComponent implements OnInit {
     function resize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (isTouchDevice()) {
+        renderer.setPixelRatio(1);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      } else {
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
     }
 
     window.addEventListener('resize', resize);

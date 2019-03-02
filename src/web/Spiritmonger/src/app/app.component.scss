@@ -52,9 +52,71 @@ img {
   width: 50px;
   height: 50px;
   position: fixed;
-  background: white;
+  background: transparent;
   margin: 20px 20px;
   right: 0;
   top: 0;
   z-index: 99999;
+}
+
+.close-button-container {
+  width: 30px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.close-button {
+  position: absolute;
+  margin: 0 auto;
+  border: 2px solid #555;
+  background: transparent;
+  border-radius: 20px;
+  padding: 15px 15px 15px;
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.close-button:hover {
+  border: 2px solid #555;
+  transition: all 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.close-button:after,
+.close-button:before {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: rotate(45deg) translateX(0) translateY(0);
+  transform: rotate(45deg) translateX(0) translateY(0);
+  height: 1.5em;
+  width: 0.15em;
+  background: #555;
+  content: '';
+  display: block;
+  margin: 0 0 0 -1px;
+  transition: all 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.close-button:hover:after,
+.close-button:hover:before {
+  background: #555;
+}
+.close-button:hover:after {
+  -webkit-transform: rotate(-315deg) translateX(7px) translateY(1px);
+  transform: rotate(-315deg) translateX(7px) translateY(1px);
+  height: 0.9em;
+  width: 0.15em;
+  transition: all 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.close-button:hover:before {
+  -webkit-transform: rotate(-405deg) translateX(-7px) translateY(1px);
+  transform: rotate(-405deg) translateX(-7px) translateY(1px);
+  height: 0.9em;
+  width: 0.15em;
+  transition: all 250ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.close-button:before {
+  -webkit-transform: rotate(-45deg) translateX(0) translateY(0);
+  transform: rotate(-45deg) translateX(0) translateY(0);
 }

@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class AppService {
-  private _pageLength: number = 24;
+  private _pageLength: number = -1;
   protected _isLoading: BehaviorSubject<boolean>;
   private _cards: BehaviorSubject<Array<ICard>>;
   private _pagination: BehaviorSubject<CardSearchRequest>;
