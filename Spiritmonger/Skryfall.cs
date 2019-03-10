@@ -105,10 +105,10 @@ namespace Spiritmonger
 
     public class Prices
     {
-        public object Usd { get; set; }
+        public string Usd { get; set; }
         public string Usd_foil { get; set; }
         public string Eur { get; set; }
-        public object Tix { get; set; }
+        public string Tix { get; set; }
     }
 
     public class Related_Uris

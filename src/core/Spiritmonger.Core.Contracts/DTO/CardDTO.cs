@@ -10,6 +10,10 @@ namespace Spiritmonger.Core.Contracts.DTO
         public string Expansion { get; set; }
         public string ImageUrl { get; set; }
 
+
+        public decimal? MKM_price { get; set; }
+        public decimal? CKD_price { get; set; }
+        public decimal? TIX_price { get; set; }
     }
 
     public class CardDTO : CardBaseDTO

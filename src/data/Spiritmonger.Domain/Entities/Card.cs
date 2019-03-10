@@ -15,6 +15,10 @@ namespace Spiritmonger.Domain.Entities
         public Guid? CardNameId { get; set; }
         public CardName CardName { get; set; }
 
+        public decimal? MKM_price { get; set; }
+        public decimal? CKD_price { get; set; }
+        public decimal? TIX_price { get; set; }
+
 
         [NotMapped]
         public int Relevance { get; set; }

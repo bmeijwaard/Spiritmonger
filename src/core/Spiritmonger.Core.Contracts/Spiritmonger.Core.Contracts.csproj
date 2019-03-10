@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\cmon\Spiritmonger.Cmon\Spiritmonger.Cmon.csproj" />
     <ProjectReference Include="..\..\data\Spiritmonger.Domain\Spiritmonger.Domain.csproj" />
   </ItemGroup>
 

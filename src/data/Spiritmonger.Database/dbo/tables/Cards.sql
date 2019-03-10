@@ -6,6 +6,9 @@
 	[Expansion] NVARCHAR(MAX) NULL,
 	[ImageUrl] NVARCHAR(MAX) NULL,
 	[CardNameId] UNIQUEIDENTIFIER NULL,
+	[MKM_price] DECIMAL(19, 5) NULL,
+	[CKD_price] DECIMAL(19, 5) NULL,
+	[TIX_price] DECIMAL(19, 5) NULL,	
     CONSTRAINT [PK_Cards] PRIMARY KEY CLUSTERED ([Id]),
 	CONSTRAINT [FK_CardNames_Cards_CardNameId] FOREIGN KEY ([CardNameId]) REFERENCES [dbo].[CardNames] ([Id])
 )

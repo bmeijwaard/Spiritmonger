@@ -3,8 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MtgApiManager.Lib.Service;
 using Newtonsoft.Json;
+using Spiritmonger.Cmon.Types;
 using Spiritmonger.Core.Contracts.DTO;
+using Spiritmonger.Core.Contracts.Models.Goldfish;
 using Spiritmonger.Core.Contracts.Services;
+using Spiritmonger.Core.Scrapers;
 using Spiritmonger.Mapping.Modules;
 using Spiritmonger.Mapping.Profiles;
 using System;
@@ -19,12 +22,17 @@ using System.Threading.Tasks;
 
 namespace Spiritmonger
 {
-    public class Program
+    public class UserSecrets
+    {
+
+    }
+
+    public static class Program
     {
         private static CardService _cardApi;
         private static ICardService _cardService;
         private static ICardNameService _cardNameService;
-        private static int PAGE = 1357;
+        private static int PAGE = 1;
         private static int COUNTER = 0;
         private static string PAGE_URL = "https://api.scryfall.com/cards?page=";
 
@@ -36,7 +44,7 @@ namespace Spiritmonger
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddUserSecrets<Program>()
+                .AddUserSecrets<UserSecrets>()
                 .AddEnvironmentVariables();
 
             var config = builder.Build();
@@ -58,7 +66,10 @@ namespace Spiritmonger
         {
             try
             {
-                await ReplaceImagesAsync();
+                await RotateScryfall(); // done
+                // await ReplaceImagesAsync();
+
+                //await ScrapeGoldfishAsync();
             }
             catch (Exception ex)
             {
@@ -69,6 +80,36 @@ namespace Spiritmonger
                 Console.WriteLine("Done! Press 'any' key to exit.");
                 Console.ReadKey(true);
             }
+        }
+
+        private static async Task ScrapeGoldfishAsync()
+        {
+            ConcurrentBag<GoldfishDeckDTO> decks = new ConcurrentBag<GoldfishDeckDTO>();
+            // foreach(Format format in IterateEnumOfType<Format>())
+            await IterateEnumOfType<Format>().ParallelForEachAsync(async format =>
+            {
+                IEnumerable<GoldfishDeckDTO> formatDecks = await GoldfishScraper.GetDecksAsync(format);
+                foreach (GoldfishDeckDTO deck in formatDecks)
+                {
+                    IEnumerable<GoldfishCardDTO> cards = await GoldfishScraper.GetCardsAsync(deck.Url);
+                    deck.Cards = cards;
+                    Console.WriteLine($"Cards: {cards.Select(c => c.Copies).Sum()}, {deck.Name}");
+                }
+                decks.AddRange(formatDecks);
+            });
+
+            ConcurrentBag<CardNameDTO> cardNames = new ConcurrentBag<CardNameDTO>();
+            var names = decks.SelectMany(d => d.Cards.Select(c => c.Name)).Distinct();
+            await names.ParallelForEachAsync(async name =>
+            {
+                cardNames.Add(new CardNameDTO()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = name
+                });
+            });
+
+            await _cardNameService.BulkUpdateOrInsertAsync(cardNames);
         }
 
         private static async Task ReplaceImagesAsync()
@@ -110,7 +151,7 @@ namespace Spiritmonger
         {
             await Enumerable.Range(PAGE, 2000).ParallelForEachAsync(async index =>
             {
-                var references = new ConcurrentBag<CardNameDTO>();
+                var references = new ConcurrentBag<CardDTO>();
 
                 var response = await ReadFromClientAsync<ScryfallObject>(PAGE_URL + index);
 
@@ -129,21 +170,41 @@ namespace Spiritmonger
                         }
                     }
                 }
-
-                await _cardNameService.BulkUpdateOrInsertAsync(references);
-            });
+                Thread.Sleep(50);
+                await _cardService.BulkUpdateOrInsertAsync(references);
+            }, 4);
         }
 
-        private static CardNameDTO ProcessCardAsync(Data card, int id)
+        private static CardNameDTO ProcessCardNameAsync(Data card, int id)
         {
             if (card?.Image_uris == null) return null;
 
-            var url = card.Image_uris.Png ?? card.Image_uris.Normal;
+            var url = card.Image_uris.Png ?? card.Image_uris.Normal ?? string.Empty;
             var endNumber = url.IndexOf("?") == -1 ? url.Length : url.IndexOf("?");
             return new CardNameDTO
             {
                 Id = Guid.NewGuid(),
                 Name = $"{id}|{url.Substring(0, endNumber)}"
+            };
+        }
+
+        private static CardDTO ProcessCardAsync(Data card, int id)
+        {
+            if (card == null)
+                return null;
+
+            var url = card.Image_uris == null ? "" : card.Image_uris.Png ?? card.Image_uris.Normal ?? "";
+            var endNumber = url.IndexOf("?") == -1 ? url.Length : url.IndexOf("?");
+            return new CardDTO
+            {
+                Id = Guid.NewGuid(),
+                MultiverseId = id,
+                ImageUrl = url.Substring(0, endNumber),
+                Expansion = card.Set_name,
+                Name = card.Name,
+                CKD_price = string.IsNullOrWhiteSpace(card.Prices.Usd) ? null : (decimal?)decimal.Parse(card.Prices.Usd),
+                MKM_price = string.IsNullOrWhiteSpace(card.Prices.Eur) ? null : (decimal?)decimal.Parse(card.Prices.Eur),
+                TIX_price = string.IsNullOrWhiteSpace(card.Prices.Tix) ? null : (decimal?)decimal.Parse(card.Prices.Tix)
             };
         }
 
@@ -200,9 +261,13 @@ namespace Spiritmonger
 
                         Console.WriteLine($"Success: {card.Name}, {card.SetName}, {card.MultiverseId}");
                     }
+                    catch (InvalidOperationException ex)
+                    {
+                        Console.WriteLine($"-- Request failed: {card.Name}, {card.SetName}, {card.MultiverseId}, Error: {ex.Message}");
+                    }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"-- Fail: {card.Name}, {card.SetName}, {card.MultiverseId}, Error: {ex.Message}");
+                        Console.WriteLine($"-- Unexpected error: {card.Name}, {card.SetName}, {card.MultiverseId}, Error: {ex.Message}");
                     }
                 });
 
@@ -210,6 +275,17 @@ namespace Spiritmonger
                 Thread.Sleep(800);
             } while (totalPages > 0 && currentPage <= (totalPages + 1));
         }
+
+        private static void AddRange<T>(this ConcurrentBag<T> input, IEnumerable<T> rangeToAdd)
+        {
+            foreach (T item in rangeToAdd)
+                input.Add(item);
+        }
+
+        private static T[] IterateEnumOfType<T>()
+            where T : Enum
+            => (T[])Enum.GetValues(typeof(T));
+
     }
 
     public class Card
