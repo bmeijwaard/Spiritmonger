@@ -1,9 +1,9 @@
-import { CardsComponent } from './cards.component';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { FuseSharedModule } from '@fuse/shared.module';
 import {
+    MatAutocompleteModule,
     MatButtonModule,
     MatChipsModule,
     MatExpansionModule,
@@ -24,19 +24,21 @@ import {
     MatProgressSpinnerModule
 } from '@angular/material';
 import { FuseWidgetModule } from '@fuse/components';
-import { CardDialog } from './dialog/card.dialog';
+import { DeckComponent } from './deck.component';
+
 
 const routes = [
     {
-        path: 'cards',
-        component: CardsComponent
+        path: 'deck',
+        component: DeckComponent
     }
 ];
 
 @NgModule({
-    declarations: [CardsComponent, CardDialog],
+    declarations: [DeckComponent],
     imports: [
         RouterModule.forChild(routes),
+        MatAutocompleteModule,
         MatButtonModule,
         MatChipsModule,
         MatDialogModule,
@@ -49,6 +51,7 @@ const routes = [
         MatRippleModule,
         MatSelectModule,
         MatSortModule,
+        MatSliderModule,
         MatSnackBarModule,
         MatSlideToggleModule,
         MatProgressSpinnerModule,
@@ -57,8 +60,6 @@ const routes = [
         FuseSharedModule,
         FuseWidgetModule,
         FuseSharedModule
-    ],
-    exports: [CardsComponent, CardDialog],
-    providers: []
+    ]
 })
-export class CardsModule {}
+export class DeckModule {}

@@ -2,9 +2,10 @@ import { Injectable, Inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IMetaCardDTO, MetaCard } from './cards.component';
 import { BaseService } from 'app/_core/services/base.service';
 import { ApiResponse } from 'app/_core/models/responses/api.response';
+import { MetaCard } from 'app/_core/models/metacard.model';
+import { IMetaCardDTO } from 'app/_core/models/interfaces/metacard.interface';
 
 @Injectable()
 export class CardService extends BaseService implements Resolve<any> {
@@ -14,6 +15,10 @@ export class CardService extends BaseService implements Resolve<any> {
     constructor(private _httpClient: HttpClient, @Inject('BASE_URL') protected readonly _baseUrl: string) {
         super(_httpClient, _baseUrl);
         this.onChanged = new BehaviorSubject(new Array<MetaCard>());
+    }
+
+    get cards$() {
+        return this.onChanged.asObservable();
     }
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<MetaCard[]> | Promise<MetaCard[]> | MetaCard[] {

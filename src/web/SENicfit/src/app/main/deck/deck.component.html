@@ -1,0 +1,139 @@
+<div id="product" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="row" fxLayoutAlign="space-between center">
+
+            <!-- APP TITLE -->
+            <div fxLayout="row" fxLayoutAlign="start center">
+
+                <div fxLayout="column" fxLayoutAlign="start start">
+                    <div class="h2">
+                        Decklist
+                    </div>
+                    <div class="subtitle secondary-text">
+                        <span>Edit your list</span>
+                    </div>
+                </div>
+            </div>
+            <!-- / APP TITLE -->
+
+            <button mat-raised-button disabled>
+                <span>SAVE</span>
+            </button>
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <!-- CONTENT -->
+            <div class="content">
+
+
+                <mat-tab-group>
+
+                    <mat-tab label="Decklist">
+
+                        <div class="tab-content p-24" fusePerfectScrollbar>
+
+                            <form class="example-form" fxLayout="column" fxLayoutAlign="start">
+
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                    <div class="h2 m-12">Total cards: {{total}}</div>
+                                    <div class="h2 m-12">Lands: {{lands}}</div>
+                                    <div class="h2 m-12">Interaction: {{interaction}}</div>
+                                    <div class="h2 m-12">Manipulation: {{manipulation}}</div>
+                                    <div class="h2 m-12">Finisher: {{finisher}}</div>
+                                    <div class="h2 m-12">Ramp: {{ramp}}</div>
+                                    <div class="h2 m-12">Avg CMC: {{averageCMC | number : '1.2-2'}}</div>
+                                    <div class="h2 m-12">Card advantage: {{advantage}}</div>
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"
+                                    *ngIf="options.length > 0">
+
+                                    <!-- // content -->
+                                    <mat-form-field fxFlex="60" class="pr-4">
+                                        <mat-label>Card name</mat-label>
+                                        <input type="text" placeholder="Add a card..." aria-label="Number" matInput
+                                            #card [formControl]="cardSelection" [matAutocomplete]="auto">
+                                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                                {{option}}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+
+                                    <mat-form-field fxFlex="30" class="pl-4">
+                                        <mat-label>Card amount</mat-label>
+                                        <input type="number" placeholder="Amount..." aria-label="Number" matInput
+                                            [formControl]="cardAmount">
+                                    </mat-form-field>
+
+                                    <div class="pl-4" style="margin-top:-10px;" fxFlex="10"
+                                        fxLayoutAlign="center center">
+                                        <button mat-flat-button color="primary" (click)="addToDeck()">
+                                            <mat-icon>add_circle_outline</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"
+                                    *ngFor="let card of deck.ToArray()">
+
+                                    <!-- // content -->
+                                    <mat-form-field fxFlex="60" class="pr-4">
+                                        <mat-label>Card name</mat-label>
+                                        <input type="text" placeholder="Add a card..." matInput disabled
+                                            value="{{card.name}}" [value]="card.name">
+                                    </mat-form-field>
+
+                                    <mat-form-field fxFlex="30" class="pl-4">
+                                        <mat-label>Card amount</mat-label>
+                                        <input type="number" placeholder="Amount..." matInput value="{{card.amount}}"
+                                            (keyup)="changeAmount($event, card.name)">
+                                    </mat-form-field>
+
+                                    <div class="pl-4" style="margin-top:-10px;" fxFlex="10"
+                                        fxLayoutAlign="center center">
+                                        <button mat-flat-button color="warn" (click)="removeFromDeck(card)">
+                                            <mat-icon>remove_circle_outline</mat-icon>
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </mat-tab>
+
+                    <!-- <mat-tab label="Decklist">
+                            <div class="tab-content p-24" fusePerfectScrollbar>
+                        
+                            </div>
+                        </mat-tab> -->
+
+
+                </mat-tab-group>
+
+
+            </div>
+            <!-- / CONTENT -->
+
+        </div>
+        <!-- / CONTENT CARD -->
+
+    </div>
+    <!-- / CENTER -->
+
+</div>

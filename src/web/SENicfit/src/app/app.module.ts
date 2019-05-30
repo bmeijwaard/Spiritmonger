@@ -1,3 +1,4 @@
+import { DeckModule } from './main/deck/deck.module';
 import { CardDialog } from './main/cards/dialog/card.dialog';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,11 +21,16 @@ import { LayoutModule } from 'app/layout/layout.module';
 import { SampleModule } from 'app/main/sample/sample.module';
 import { CardsModule } from './main/cards/cards.module';
 import { environment } from 'environments/environment';
+import { CardService } from './main/cards/cards.service';
 
 const appRoutes: Routes = [
     {
         path: '**',
-        redirectTo: 'sample'
+        redirectTo: 'deck'
+    },
+    {
+        path: 'deck',
+        loadChildren: './main/deck/deck.module#DeckModule'
     },
     {
         path: 'cards',
@@ -59,11 +65,13 @@ const appRoutes: Routes = [
         // App modules
         LayoutModule,
         SampleModule,
-        CardsModule
+        CardsModule,
+        DeckModule
     ],
     bootstrap: [AppComponent],
     entryComponents: [CardDialog],
     providers: [
+        CardService,
         {
             provide: 'BASE_URL',
             useFactory: getBaseUrl

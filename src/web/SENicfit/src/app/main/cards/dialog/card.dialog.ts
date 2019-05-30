@@ -1,9 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { IMetaCardDTO, MetaCard } from '../cards.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { CardService } from '../cards.service';
+import { MetaCard } from 'app/_core/models/metacard.model';
+import { IMetaCardDTO } from 'app/_core/models/interfaces/metacard.interface';
 
 @Component({
     selector: 'card-dialog',

@@ -8,6 +8,13 @@ export const navigation: FuseNavigation[] = [
         icon     : 'color_lens',
         children : [
             {
+                id       : 'deck',
+                title    : 'Deck',
+                type     : 'item',
+                icon     : 'assignment',
+                url      : '/deck'
+            },
+            {
                 id       : 'cards',
                 title    : 'Cards',
                 type     : 'item',
