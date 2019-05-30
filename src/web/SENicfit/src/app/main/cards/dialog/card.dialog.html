@@ -1,0 +1,79 @@
+<form class="p-12" fxLayout="column" fxLayoutAlign="start" name="form" [formGroup]="form" (ngSubmit)="onFormSubmit()"
+    ngNativeValidate>
+
+    <div class="h2 mb-24">{{ (card.name || 'New card') }}</div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+        <mat-form-field appearance="outline" fxFlex="100">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" required>
+            <mat-icon matSuffix class="divider">assignment_ind</mat-icon>
+        </mat-form-field>
+
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+            <mat-label>CMC</mat-label>
+            <input matInput formControlName="cmc" type="number">
+            <mat-icon matSuffix class="divider">sync</mat-icon>
+            <mat-error>Enter a value!</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
+            <mat-label>Card advantage (+ or -)</mat-label>
+            <input matInput formControlName="advantage" type="number">
+            <mat-icon matSuffix class="divider">sync_problem</mat-icon>
+            <mat-error>Enter a value!</mat-error>
+        </mat-form-field>
+
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+        <mat-form-field appearance="outline" fxFlex="50" class="pr-4">
+            <mat-label>Mana cost (AND)</mat-label>
+            <input matInput formControlName="manaCost">
+            <mat-icon matSuffix class="divider">trending_down</mat-icon>
+            <mat-error>Enter a value!</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
+            <mat-label>Provides mana (OR)</mat-label>
+            <input matInput formControlName="mana">
+            <mat-icon matSuffix class="divider">trending_up</mat-icon>
+            <mat-error>Enter a value!</mat-error>
+        </mat-form-field>
+
+    </div>
+
+
+    <div fxLayout="column" fxLayoutAlign="space-around start" fxFlex="1 0 auto">
+        <mat-slide-toggle formControlName="isInitial" color="warn">Requires initial mana sources only</mat-slide-toggle>
+        <mat-slide-toggle class="mt-12" formControlName="isLand" color="warn">Counts as a land</mat-slide-toggle>
+        <mat-slide-toggle formControlName="isInteraction" color="warn">Counts as interaction</mat-slide-toggle>
+        <mat-slide-toggle formControlName="isManipulation" color="warn">Counts as library manipulation
+        </mat-slide-toggle>
+        <mat-slide-toggle formControlName="isFinisher" color="warn">Counts as a finisher</mat-slide-toggle>
+        <mat-slide-toggle formControlName="isRamp" color="warn">Counts as ramp</mat-slide-toggle>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto" class="mt-12" *ngIf="error">
+        <div class="message-box error">
+            <p>{{error}}</p>
+        </div>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="1 0 auto" class="mt-24">
+        <button mat-button type="button" mat-dialog-close>Cancel</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="isLoading">
+            <span *ngIf="!isLoading; else loading">Save</span>
+            <ng-template #loading>
+                <mat-icon class="spinner">filter_tilt_shift</mat-icon>
+            </ng-template>
+        </button>
+    </div>
+
+</form>

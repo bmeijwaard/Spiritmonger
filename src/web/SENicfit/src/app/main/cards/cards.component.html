@@ -1,0 +1,213 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    image
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Cards
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon>search</mat-icon>
+                    <input #filter placeholder="Search for a card">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+            <!-- ADD BUTTON -->
+            <!-- <button mat-raised-button (click)="openDialog(null)" class="add-product-button fuse-white mt-24 mt-md-0">
+                <span>ADD NEW CARD</span>
+            </button> -->
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+            <mat-progress-bar mode="buffer" *ngIf="dataSource.filteredData.length === 0"></mat-progress-bar>
+            <mat-table class="products-table" #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}"
+                fusePerfectScrollbar (ngShow)="dataSource.filteredData.length > 0">
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let card">
+                        <p class="text-truncate">{{card.name}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="cmc">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>CMC</mat-header-cell>
+                    <mat-cell *matCellDef="let card">
+                        <p class="text-truncate">{{card.cmc}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="manaCost">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Cost (AND)</mat-header-cell>
+                    <mat-cell *matCellDef="let card">
+                        <p class="text-truncate">{{card.manaCost}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="mana">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Provides (OR)</mat-header-cell>
+                    <mat-cell *matCellDef="let card">
+                        <p class="text-truncate">{{card.mana}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="cardAdvantage">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-sm>Advantage</mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-sm>
+                        <span>
+                            {{card.cardAdvantage}}
+                        </span>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="isLand">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Land</mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="card.isLand" class="active-icon green-600">check</mat-icon>
+                        <mat-icon *ngIf="!card.isLand" class="active-icon">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="isInteraction">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Interaction</mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="card.isInteraction" class="active-icon green-600">check</mat-icon>
+                        <mat-icon *ngIf="!card.isInteraction" class="active-icon">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="isManipulation">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Manipulation
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="card.isManipulation" class="active-icon green-600">check</mat-icon>
+                        <mat-icon *ngIf="!card.isManipulation" class="active-icon">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+
+                <ng-container matColumnDef="isFinisher">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Finisher</mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="card.isFinisher" class="active-icon green-600">check</mat-icon>
+                        <mat-icon *ngIf="!card.isFinisher" class="active-icon">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+
+                <ng-container matColumnDef="isRamp">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Ramp</mat-header-cell>
+                    <mat-cell *matCellDef="let card" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="card.isRamp" class="active-icon green-600">check</mat-icon>
+                        <mat-icon *ngIf="!card.isRamp" class="active-icon">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+                <!--
+
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.id}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="image">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <img class="product-image" *ngIf="product.featuredImageId" [alt]="product.name"
+                            [src]="product.images[product.featuredImageId].url" />
+                        <img *ngIf="!product.featuredImageId"
+                            [src]="'assets/images/ecommerce/product-image-placeholder.png'">
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.name}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="category">
+                    <mat-header-cell *matHeaderCellDef fxHide mat-sort-header fxShow.gt-md>Category</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-md>
+                        <p class="category text-truncate">
+                            {{product.categories[0]}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="price">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Price</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{product.priceTaxIncl | currency:'USD':'symbol'}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="quantity">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-sm>Quantity</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-sm>
+
+                        <span class="quantity-indicator text-truncate"
+                            [ngClass]="{'red-500':product.quantity <= 5, 'amber-500':product.quantity > 5 && product.quantity <= 25,'green-600':product.quantity > 25}">
+                        </span>
+                        <span>
+                            {{product.quantity}}
+                        </span>
+
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Active</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="product.active" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!product.active" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+            -->
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let card; columns: displayedColumns;" class="product pointer" matRipple (click)="openDialog(card.id)"></mat-row>
+            </mat-table>
+
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="100"
+                [pageSizeOptions]="[25, 100, 250]">
+            </mat-paginator>
+        </div>
+        <!-- / CONTENT CARD -->
+        <div class="floating-button">
+            <button mat-fab (click)="openDialog(null)">
+                <mat-icon aria-label="Add a new card">add</mat-icon>
+            </button>
+        </div>
+    </div>
+    <!-- / CENTER -->
+</div>
