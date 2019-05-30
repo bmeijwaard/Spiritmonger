@@ -11,6 +11,10 @@ namespace Spiritmonger.Domain.Entities
         public string Expansion { get; set; }
         public string ImageUrl { get; set; }
 
+        public string CardType { get; set; }
+        public string ManaCost { get; set; }
+        public string Mana { get; set; }
+
         // TODO: this field is currently nullable for import purposes
         public Guid? CardNameId { get; set; }
         public CardName CardName { get; set; }

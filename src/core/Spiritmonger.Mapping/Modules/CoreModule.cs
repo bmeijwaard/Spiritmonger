@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Spiritmonger.Cmon.Settings;
 using Spiritmonger.Core.Contracts.Services;
 using Spiritmonger.Core.Services;
 using Spiritmonger.Persistence;
@@ -14,10 +15,16 @@ namespace Spiritmonger.Mapping.Modules
     {
         public static IServiceCollection Load(IServiceCollection services, IConfiguration config)
         {
+            // load options from config
+            services.AddOptions();
+            services.Configure<ConnectionStrings>(opt => config.GetSection("ConnectionStrings").Bind(opt));
+
+            // setup EF
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<SqlContext>(options =>
                     options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
+            // register dependencies
             services.AddScoped<ISqlContext>(provider => provider.GetService<SqlContext>());
             services.AddScoped<IDapperProvider>(provider => new DapperProvider(config.GetConnectionString("DefaultConnection")));
             services.AddScoped<ISqlContextProvider, SqlContextProvider>();
@@ -25,6 +32,7 @@ namespace Spiritmonger.Mapping.Modules
 
             services.AddScoped<ICardService, CardService>();
             services.AddScoped<ICardNameService, CardNameService>();
+            services.AddScoped<IMetaCardService, MetaCardService>();
 
             return services;
         }

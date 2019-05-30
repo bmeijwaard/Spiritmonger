@@ -24,7 +24,7 @@ namespace Spiritmonger.Core.Services
             _contextProvider = contextProvider;
         }
 
-        public async Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Expression<Func<TEntity, bool>> expression = null)
+        public virtual async Task<ServiceResponse<IEnumerable<TDto>>> ReadAsync(Expression<Func<TEntity, bool>> expression = null)
         {
             IQueryable<TEntity> query = _contextProvider.Context.Set<TEntity>();
             if (expression != null)
@@ -35,13 +35,13 @@ namespace Spiritmonger.Core.Services
             return new ServiceResponse<IEnumerable<TDto>>(entities.Select(e => Mapper.Map<TDto>(e)));
         }
 
-        public async Task<ServiceResponse<TDto>> ReadAsync(Guid id)
+        public virtual async Task<ServiceResponse<TDto>> ReadAsync(Guid id)
         {
             var entity = await _contextProvider.Context.Set<TEntity>().FindAsync(id).ConfigureAwait(false);
             return new ServiceResponse<TDto>(Mapper.Map<TDto>(entity));
         }
 
-        public async Task<ServiceResponse> CreateAsync(TDto dto)
+        public virtual async Task<ServiceResponse> CreateAsync(TDto dto)
         {
             if (await _contextProvider.Context.Set<TEntity>().AnyAsync(e => e.Id == dto.Id).ConfigureAwait(false))
                 return new ServiceResponse($"The given {typeof(TEntity).Name} already exists.");
@@ -57,7 +57,7 @@ namespace Spiritmonger.Core.Services
             }).ConfigureAwait(false);
         }
 
-        public async Task<ServiceResponse> UpdateAsync(TDto dto)
+        public virtual async Task<ServiceResponse> UpdateAsync(TDto dto)
         {
             var entity = await _contextProvider.Context.Set<TEntity>().FindAsync(dto.Id).ConfigureAwait(false);
             if (entity == null)
@@ -77,7 +77,7 @@ namespace Spiritmonger.Core.Services
         }
 
 
-        public async Task<ServiceResponse> DeleteAsync(TDto dto)
+        public virtual async Task<ServiceResponse> DeleteAsync(TDto dto)
         {
             var entity = await _contextProvider.Context.Set<TEntity>().FindAsync(dto.Id).ConfigureAwait(false);
             if (entity == null)
@@ -94,7 +94,7 @@ namespace Spiritmonger.Core.Services
             }).ConfigureAwait(false);
         }
 
-        public async Task<ServiceResponse> BulkUpdateOrInsertAsync(IEnumerable<TDto> dtos)
+        public virtual async Task<ServiceResponse> BulkUpdateOrInsertAsync(IEnumerable<TDto> dtos)
         {
             return (ServiceResponse) await _contextProvider.ExecuteTransactionAsync(async context =>
             {

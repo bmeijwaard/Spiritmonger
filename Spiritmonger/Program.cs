@@ -69,7 +69,7 @@ namespace Spiritmonger
                 await RotateScryfall(); // done
                 // await ReplaceImagesAsync();
 
-                //await ScrapeGoldfishAsync();
+                // await ScrapeGoldfishAsync();
             }
             catch (Exception ex)
             {
@@ -149,7 +149,7 @@ namespace Spiritmonger
 
         public static async Task RotateScryfall()
         {
-            await Enumerable.Range(PAGE, 2000).ParallelForEachAsync(async index =>
+            await Enumerable.Range(PAGE, 1400).ParallelForEachAsync(async index =>
             {
                 var references = new ConcurrentBag<CardDTO>();
 
@@ -162,15 +162,18 @@ namespace Spiritmonger
                     {
                         foreach (var id in card.Multiverse_ids)
                         {
-                            var name = ProcessCardAsync(card, id);
-                            if (name == null) continue;
-                            references.Add(name);
-                            Interlocked.Increment(ref COUNTER);
-                            Console.WriteLine($"Cards done: {COUNTER}, page: {PAGE}");
+                            if (MissingCards.Any(c => card.Name.StartsWith(c)))
+                            {
+                                var name = ProcessCardAsync(card, id);
+                                if (name == null) continue;
+                                references.Add(name);
+                                Interlocked.Increment(ref COUNTER);
+                                Console.WriteLine($"Cards done: {COUNTER}, page: {PAGE}");
+                            }
                         }
                     }
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(100);
                 await _cardService.BulkUpdateOrInsertAsync(references);
             }, 4);
         }
@@ -202,6 +205,9 @@ namespace Spiritmonger
                 ImageUrl = url.Substring(0, endNumber),
                 Expansion = card.Set_name,
                 Name = card.Name,
+                Mana = card.Color_identity != null ? string.Join("|", card.Color_identity) : string.Empty,
+                ManaCost = card.Mana_cost,
+                CardType = card.Type_line,
                 CKD_price = string.IsNullOrWhiteSpace(card.Prices.Usd) ? null : (decimal?)decimal.Parse(card.Prices.Usd),
                 MKM_price = string.IsNullOrWhiteSpace(card.Prices.Eur) ? null : (decimal?)decimal.Parse(card.Prices.Eur),
                 TIX_price = string.IsNullOrWhiteSpace(card.Prices.Tix) ? null : (decimal?)decimal.Parse(card.Prices.Tix)
@@ -286,6 +292,228 @@ namespace Spiritmonger
             where T : Enum
             => (T[])Enum.GetValues(typeof(T));
 
+        private static IList<string> MissingCards = new List<string>
+        {
+            "Trostani Discordant",
+            "Hydroid Krasis",
+            "Nicol Bolas, the Ravager",
+            "Thought Erasure",
+            "Harvest Pyre",
+            "Arguel's Blood Fast",
+            "Ghoulcaller's Bell",
+            "Pelt Collector",
+            "Gruul Spellbreaker",
+            "Failure // Comply",
+            "Biogenic Ooze",
+            "Niv-Mizzet, Parun",
+            "Jace, Vryn's Prodigy",
+            "Heroic Reinforcements",
+            "Botanical Sanctum",
+            "Animation Module",
+            "Witchbane Orb",
+            "Treasure Map",
+            "Cartouche of Solidarity",
+            "Aether Hub",
+            "Bedevil",
+            "Nissa, Vital Force",
+            "Elvish Clancaller",
+            "Tithe Taker",
+            "Enigma Drake",
+            "Unbridled Growth",
+            "Sinister Sabotage",
+            "Conclave Tribunal",
+            "Memory's Journey",
+            "Justice Strike",
+            "Cry of the Carnarium",
+            "Doom Whisperer",
+            "Mayor of Avabruck",
+            "Judith, the Scourge Diva",
+            "Gearseeker Serpent",
+            "Circuitous Route",
+            "March of the Multitudes",
+            "Garruk Relentless",
+            "Skarrgan Hellkite",
+            "Sram, Senior Edificer",
+            "Cartouche of Ambition",
+            "Dovin, Grand Arbiter",
+            "Foundry Inspector",
+            "Thing in the Ice",
+            "Kaya, Orzhov Usurper",
+            "Risk Factor",
+            "Cindervines",
+            "As Foretold",
+            "Pteramander",
+            "Flayer of the Hatebound",
+            "Arclight Phoenix",
+            "Expansion // Explosion",
+            "Golgari Findbroker",
+            "Spirebluff Canal",
+            "Domri, Chaos Bringer",
+            "Disinformation Campaign",
+            "Nissa, Vastwood Seer",
+            "Experimental Frenzy",
+            "Footlight Fiend",
+            "Legion's Landing",
+            "Light Up the Stage",
+            "Lost Legacy",
+            "Fatal Push",
+            "Delver of Secrets",
+            "Archfiend of Ifnir",
+            "Ritual of Soot",
+            "Walking Ballista",
+            "Dusk // Dawn",
+            "Skewer the Critics",
+            "Gutterbones",
+            "Madcap Experiment",
+            "Padeem, Consul of Innovation",
+            "Baral, Chief of Compliance",
+            "Blooming Marsh",
+            "Whir of Invention",
+            "Prime Speaker Vannifar",
+            "Concealed Courtyard",
+            "Hunted Witness",
+            "Crackling Drake",
+            "Sweltering Suns",
+            "Sacred Cat",
+            "Basilica Bell-Haunt",
+            "Creeping Chill",
+            "Moorland Haunt",
+            "Paradoxical Outcome",
+            "Chemister's Insight",
+            "Venerated Loxodon",
+            "Dawn of Hope",
+            "Discovery // Dispersal",
+            "Vizier of Remedies",
+            "Flameblade Adept",
+            "Curse of the Pierced Heart",
+            "Mission Briefing",
+            "Summary Judgment",
+            "Runaway Steam-Kin",
+            "Huntmaster of the Fells",
+            "Unmoored Ego",
+            "Ghoulcaller's Chant",
+            "Hieroglyphic Illumination",
+            "Kaya's Wrath",
+            "Plaza of Harmony",
+            "Shimmer of Possibility",
+            "Search for Azcanta",
+            "Benthic Biomancer",
+            "Chandra, Torch of Defiance",
+            "Inventors' Fair",
+            "Blossoming Defense",
+            "Archangel Avacyn",
+            "Teferi, Hero of Dominaria",
+            "Heroic Intervention",
+            "Kari Zev, Skyship Raider",
+            "Glorybringer",
+            "Dissenter's Deliverance",
+            "Curator of Mysteries",
+            "Maximize Velocity",
+            "Narnam Renegade",
+            "Sphinx of Foresight",
+            "Ethereal Absolution",
+            "Inspiring Vantage",
+            "Faith's Shield",
+            "Legion Warboss",
+            "Essence Capture",
+            "Hope of Ghirapur",
+            "Lavinia, Azorius Renegade",
+            "Nullhide Ferox",
+            "Kari Zev's Expertise",
+            "Kambal, Consul of Allocation",
+            "Incubation // Incongruity",
+            "Felidar Guardian",
+            "Vraska, Golgari Queen",
+            "Infernal Plunge",
+            "Ambush Viper",
+            "Dread Wanderer",
+            "Lava Coil",
+            "Haze of Pollen",
+            "Warrant // Warden",
+            "Drogskol Captain",
+            "Cathartic Reunion",
+            "Gonti, Lord of Luxury",
+            "Devious Cover-Up",
+            "Stormbound Geist",
+            "Beacon Bolt",
+            "Integrity // Intervention",
+            "Duskwatch Recruiter",
+            "Fateful Showdown",
+            "Profane Procession",
+            "Gnaw to the Bone",
+            "Fireblade Artist",
+            "Ral, Izzet Viceroy",
+            "Festering Mummy",
+            "Status // Statue",
+            "Deputy of Detention",
+            "Gideon of the Trials",
+            "Emmara, Soul of the Accord",
+            "Growth Spiral",
+            "Incubation Druid",
+            "Divine Visitation",
+            "Gates Ablaze",
+            "Guild Summit",
+            "Tajic, Legion's Edge",
+            "Elvish Rejuvenator",
+            "Consulate Crackdown",
+            "Fragmentize",
+            "Ceremonious Rejection",
+            "Priest of Forgotten Gods",
+            "Frilled Mystic",
+            "Wilderness Reclamation",
+            "Smuggler's Copter",
+            "Hero of Precinct One",
+            "Kraul Harpooner",
+            "Beast Whisperer",
+            "Fetid Pools",
+            "Rix Maadi Reveler",
+            "Murmuring Mystic",
+            "Seraph of the Scales",
+            "Cartouche of Strength",
+            "Vivien Reid",
+            "Deafening Clarion",
+            "Anointed Procession",
+            "Sorin, Lord of Innistrad",
+            "Gavony Township",
+            "Collision // Colossus",
+            "Saheeli Rai",
+            "Depose // Deploy",
+            "Scrap Trawler",
+            "Sheltered Thicket",
+            "Growth-Chamber Guardian",
+            "Rhythm of the Wild",
+            "Find // Finality",
+            "Battle at the Bridge",
+            "Bladebrand",
+            "Spire of Industry",
+            "Lazav, the Multifarious",
+            "Radical Idea",
+            "Electrodominance",
+            "By Force",
+            "Young Wolf",
+            "Gatebreaker Ram",
+            "Cast Out",
+            "Aurelia, Exemplar of Justice",
+            "Desert Cerodon",
+            "Zhur-Taa Goblin",
+            "Hidden Stockpile",
+            "Knight of Autumn",
+            "Flower // Flourish",
+            "Soul-Scar Mage",
+            "Angel of Grace",
+            "Glyph Keeper",
+            "Plaguecrafter",
+            "Thief of Sanity",
+            "Nevermore",
+            "Laboratory Maniac",
+            "Unbreakable Formation",
+            "Carnival // Carnage",
+            "Commit // Memory",
+            "Renegade Rallier",
+            "Goblin Cratermaker",
+            "Lim-Dul's Vault",
+            "Assassin's Trophy"
+        };
     }
 
     public class Card

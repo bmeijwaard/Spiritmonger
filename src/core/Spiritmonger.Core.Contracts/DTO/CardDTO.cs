@@ -10,6 +10,10 @@ namespace Spiritmonger.Core.Contracts.DTO
         public string Expansion { get; set; }
         public string ImageUrl { get; set; }
 
+        public string CardType { get; set; }
+        public string ManaCost { get; set; }
+        public string Mana { get; set; }
+
 
         public decimal? MKM_price { get; set; }
         public decimal? CKD_price { get; set; }

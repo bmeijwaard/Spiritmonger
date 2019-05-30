@@ -27,7 +27,6 @@ namespace Spiritmonger.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services = CoreConfiguration.Load(services, Configuration); 
             services = CoreModule.Load(services, Configuration);
             services.AddTransient<ControllerContext>();
 

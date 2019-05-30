@@ -14,6 +14,9 @@ namespace Spiritmonger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [Produces("application/json")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class CardController : Controller
     {
         private readonly ICardService _cardService;
@@ -32,7 +35,13 @@ namespace Spiritmonger.Api.Controllers
                 return StatusCode(400, new { Success = false, Error = "The search requires at least 4 characters." });
 
             var (response, totalCount) = await _cardService.SearchAsync(namepart, 0, -1, true);
-            return Ok(new { Success = true, Error = string.Empty, Data = response, TotalCount = totalCount });
+            return Ok(new
+            {
+                Success = true,
+                Error = string.Empty,
+                Data = response,
+                TotalCount = totalCount
+            });
         }
 
         [HttpPost("")]

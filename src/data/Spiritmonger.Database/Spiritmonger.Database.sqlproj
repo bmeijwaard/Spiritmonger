@@ -63,5 +63,6 @@
   <ItemGroup>
     <Build Include="dbo\tables\CardNames.sql" />
     <Build Include="dbo\tables\Cards.sql" />
+    <Build Include="dbo\tables\MetaCards.sql" />
   </ItemGroup>
 </Project>

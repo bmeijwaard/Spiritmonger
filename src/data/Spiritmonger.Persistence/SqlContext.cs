@@ -18,6 +18,7 @@ namespace Spiritmonger.Persistence
         }
 
         public virtual DbSet<Card> Cards { get; set; }
+        public virtual DbSet<MetaCard> MetaCards { get; set; }
         public virtual DbSet<CardName> CardNames { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
