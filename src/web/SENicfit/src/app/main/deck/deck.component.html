@@ -46,15 +46,34 @@
                             <form class="example-form" fxLayout="column" fxLayoutAlign="start">
 
                                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-                                    <div class="h2 m-12">Total cards: {{total}}</div>
-                                    <div class="h2 m-12">Lands: {{lands}}</div>
-                                    <div class="h2 m-12">Interaction: {{interaction}}</div>
-                                    <div class="h2 m-12">Manipulation: {{manipulation}}</div>
-                                    <div class="h2 m-12">Finisher: {{finisher}}</div>
-                                    <div class="h2 m-12">Ramp: {{ramp}}</div>
-                                    <div class="h2 m-12">Avg CMC: {{averageCMC | number : '1.2-2'}}</div>
-                                    <div class="h2 m-12">Card advantage: {{advantage}}</div>
+                                    <div class="p m-12">Total cards: {{total}}</div>
+                                    <div class="p m-12">Lands: {{lands}}</div>
+                                    <div class="p m-12">Interaction: {{interaction}}</div>
+                                    <div class="p m-12">Manipulation: {{manipulation}}</div>
+                                    <div class="p m-12">Finisher: {{finisher}}</div>
+                                    <div class="p m-12">Ramp: {{ramp}}</div>
+                                    <div class="p m-12">Avg CMC: {{averageCMC | number : '1.2-2'}}</div>
+                                    <div class="p m-12">Card advantage: {{advantage}}</div>
                                 </div>
+
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                    <div class="p m-12">Mana cost</div>
+                                    <div class="p m-12">G: {{greenCost}} | {{ ((greenCost*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">B: {{blackCost}} | {{ ((blackCost*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">W: {{whiteCost}} | {{ ((whiteCost*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">R: {{redCost}} | {{ ((redCost*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">U: {{blueCost}} | {{ ((blueCost*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                </div>
+
+                                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                                    <div class="p m-12">Mana produced</div>
+                                    <div class="p m-12">G: {{greenProvides}} | {{ ((greenProvides*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">B: {{blackProvides}} | {{ ((blackProvides*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">W: {{whiteProvides}} | {{ ((whiteProvides*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">R: {{redProvides}} | {{ ((redProvides*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                    <div class="p m-12">U: {{blueProvides}} | {{ ((blueProvides*100/totalCost) || 0) | number : '1.0-2' }}%</div>
+                                </div>
+
 
                                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"
                                     *ngIf="options.length > 0">

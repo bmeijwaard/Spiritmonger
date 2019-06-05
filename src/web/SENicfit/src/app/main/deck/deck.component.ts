@@ -29,6 +29,20 @@ export class DeckComponent {
     averageCMC: number = 0;
     advantage: number = 0;
 
+    whiteCost: number = 0;
+    greenCost: number = 0;
+    blackCost: number = 0;
+    redCost: number = 0;
+    blueCost: number = 0;
+    totalCost: number = 0;
+
+    whiteProvides: number = 0;
+    greenProvides: number = 0;
+    blackProvides: number = 0;
+    redProvides: number = 0;
+    blueProvides: number = 0;
+    totalProvides: number = 0;
+
     options: string[] = [];
     filteredOptions: Observable<string[]>;
     subs: Subscription[] = new Array<Subscription>();
@@ -36,21 +50,26 @@ export class DeckComponent {
     @ViewChild('card') cardNameElement: ElementRef;
 
     constructor(private _cardService: CardService, private _formBuilder: FormBuilder) {
-        _cardService.getCards();
+        // _cardService.getCards();
     }
 
     ngOnInit(): void {
-        this._reset();
-        this.form = this._formBuilder.group({
-            cardSelection: this.cardSelection,
-            cardAmount: this.cardAmount
-        });
+        this._cardService.getCards().then(() => {
+            const deck = localStorage.getItem('deck');
+            this.deck = deck ? new List<DeckCard>(<Array<DeckCard>>JSON.parse(deck)) : new List<DeckCard>();
 
-        this.subs.push(
-            this._cardService.cards$.subscribe(_ => {
-                this.options = this._cardService.cards.map(card => card.name).sort();
-            })
-        );
+            this._reset();
+            this.form = this._formBuilder.group({
+                cardSelection: this.cardSelection,
+                cardAmount: this.cardAmount
+            });
+
+            this.subs.push(
+                this._cardService.cards$.subscribe(_ => {
+                    this.options = this._cardService.cards.map(card => card.name).sort();
+                })
+            );
+        });
     }
 
     ngOnDestroy(): void {
@@ -99,37 +118,49 @@ export class DeckComponent {
         });
 
         this.lands = 0;
-        selectedCards.Where(c => c.isLand).ForEach(value => {
-            this.lands += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-        });
+        selectedCards
+            .Where(c => c.isLand)
+            .ForEach(value => {
+                this.lands += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            });
 
         this.interaction = 0;
-        selectedCards.Where(c => c.isInteraction).ForEach(value => {
-            this.interaction += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-        });
+        selectedCards
+            .Where(c => c.isInteraction)
+            .ForEach(value => {
+                this.interaction += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            });
 
         this.manipulation = 0;
-        selectedCards.Where(c => c.isManipulation).ForEach(value => {
-            this.manipulation += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-        });
+        selectedCards
+            .Where(c => c.isManipulation)
+            .ForEach(value => {
+                this.manipulation += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            });
 
         this.finisher = 0;
-        selectedCards.Where(c => c.isFinisher).ForEach(value => {
-            this.finisher += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-        });
+        selectedCards
+            .Where(c => c.isFinisher)
+            .ForEach(value => {
+                this.finisher += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            });
 
         this.ramp = 0;
-        selectedCards.Where(c => c.isRamp).ForEach(value => {
-            this.ramp += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-        });
+        selectedCards
+            .Where(c => c.isRamp)
+            .ForEach(value => {
+                this.ramp += this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            });
 
         this.averageCMC = 0;
         let totalCards = 0;
-        selectedCards.Where(c => !c.isLand).ForEach(value => {
-            const amount = this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
-            totalCards += amount;
-            this.averageCMC += value.cmc * amount;
-        });
+        selectedCards
+            .Where(c => !c.isLand)
+            .ForEach(value => {
+                const amount = this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+                totalCards += amount;
+                this.averageCMC += value.cmc * amount;
+            });
         this.averageCMC = this.averageCMC / totalCards;
 
         this.advantage = 0;
@@ -138,12 +169,42 @@ export class DeckComponent {
             this.advantage += value.cardAdvantage * amount;
         });
 
+        let manaCost = '';
+        let manaProvides = '';
+        selectedCards.ForEach(value => {
+            const amount = this.deck.Where(c => c.name == value.name).Sum(c => c.amount);
+            for (let i = 0; i < amount; i++) {
+                manaCost += value.manaCost;
+                manaProvides += value.mana;
+            }
+        });
+
+        this.greenCost = (manaCost.match(new RegExp('G', 'g')) || []).length || 0;
+        this.greenProvides = (manaProvides.match(new RegExp('G', 'g')) || []).length || 0;
+
+        this.blackCost = (manaCost.match(new RegExp('B', 'g')) || []).length;
+        this.blackProvides = (manaProvides.match(new RegExp('B', 'g')) || []).length;
+
+        this.whiteCost = (manaCost.match(new RegExp('W', 'g')) || []).length;
+        this.whiteProvides = (manaProvides.match(new RegExp('W', 'g')) || []).length;
+
+        this.redCost = (manaCost.match(new RegExp('R', 'g')) || []).length;
+        this.redProvides = (manaProvides.match(new RegExp('R', 'g')) || []).length;
+
+        this.blueCost = (manaCost.match(new RegExp('U', 'g')) || []).length;
+        this.blueProvides = (manaProvides.match(new RegExp('U', 'g')) || []).length;
+
+        this.totalCost = this.blueCost + this.redCost + this.whiteCost + this.blackCost + this.greenCost;
+        this.totalProvides = this.blueProvides + this.redProvides + this.whiteProvides + this.blackProvides + this.greenProvides;
+
         this.cardSelection = new FormControl('', [Validators.required]);
         this.cardAmount = new FormControl(null, [Validators.required, Validators.nullValidator]);
         this.filteredOptions = this.cardSelection.valueChanges.pipe(
             startWith(''),
             map(value => this._filter(value))
         );
+
+        localStorage.setItem('deck', JSON.stringify(this.deck.ToArray()));
     }
     private _filter(value: string): string[] {
         const filterValue = value.toLowerCase();
